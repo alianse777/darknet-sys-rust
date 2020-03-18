@@ -19,9 +19,9 @@ fn obtain_repo() -> PathBuf {
     );
     println!("Output dir: {}", out_dir.to_str().unwrap());
     println!("Repo dir: {}", repo_dir.to_str().unwrap());
-    if out_dir.exists() {
+    /*if out_dir.exists() {
         fs::remove_dir_all(&out_dir);
-    }
+    }*/
     copy_dir::copy_dir(&repo_dir.to_str().unwrap(), &out_dir).unwrap();
     out_dir.to_owned()
 }
