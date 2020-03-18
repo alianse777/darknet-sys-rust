@@ -5,10 +5,10 @@ authors = ["alianse77"]
 edition = "2018"
 repository = "https://github.com/alianse777/darknet-sys-rust"
 license = "MIT"
-description = ""
+description = "-sys crate for Rust darknet wrapper"
 documentation = ""
 readme = "./README.md"
-homepage = "http://pjreddie.com/darknet"
+homepage = "https://github.com/alianse777/darknet-rust"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
