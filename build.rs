@@ -11,6 +11,68 @@ lazy_static::lazy_static! {
     static ref BINDINGS_TARGET_PATH: PathBuf = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
 }
 
+// Guess the cmake profile using the rule defined in the link.
+// https://docs.rs/cmake/0.1.42/src/cmake/lib.rs.html#475-536
+fn guess_cmake_profile() -> &'static str {
+    // Determine Rust's profile, optimization level, and debug info:
+    #[derive(PartialEq)]
+    enum RustProfile {
+        Debug,
+        Release,
+    }
+    #[derive(PartialEq, Debug)]
+    enum OptLevel {
+        Debug,
+        Release,
+        Size,
+    }
+
+    let rust_profile = match env::var("PROFILE").unwrap().as_str() {
+        "debug" => RustProfile::Debug,
+        "release" | "bench" => RustProfile::Release,
+        unknown => {
+            eprintln!(
+                "Warning: unknown Rust profile={}; defaulting to a release build.",
+                unknown
+            );
+            RustProfile::Release
+        }
+    };
+
+    let opt_level = match env::var("OPT_LEVEL").unwrap().as_str() {
+        "0" => OptLevel::Debug,
+        "1" | "2" | "3" => OptLevel::Release,
+        "s" | "z" => OptLevel::Size,
+        unknown => {
+            let default_opt_level = match rust_profile {
+                RustProfile::Debug => OptLevel::Debug,
+                RustProfile::Release => OptLevel::Release,
+            };
+            eprintln!(
+                "Warning: unknown opt-level={}; defaulting to a {:?} build.",
+                unknown, default_opt_level
+            );
+            default_opt_level
+        }
+    };
+
+    let debug_info: bool = match env::var("DEBUG").unwrap().as_str() {
+        "false" => false,
+        "true" => true,
+        unknown => {
+            eprintln!("Warning: unknown debug={}; defaulting to `true`.", unknown);
+            true
+        }
+    };
+
+    match (opt_level, debug_info) {
+        (OptLevel::Debug, _) => "Debug",
+        (OptLevel::Release, false) => "Release",
+        (OptLevel::Release, true) => "RelWithDebInfo",
+        (OptLevel::Size, _) => "MinSizeRel",
+    }
+}
+
 fn gen_bindings<P>(include_path: P) -> Fallible<()>
 where
     P: AsRef<Path>,
@@ -39,7 +101,12 @@ where
         "cargo:rustc-link-search=native={}",
         dst.join("build").display()
     );
-    println!("cargo:rustc-link-lib=dark");
+
+    // link to different target under distinct profiles
+    match guess_cmake_profile() {
+        "Debug" => println!("cargo:rustc-link-lib=darkd"),
+        _ => println!("cargo:rustc-link-lib=dark"),
+    }
 
     gen_bindings(path.join("include"))?;
 
