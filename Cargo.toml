@@ -10,12 +10,14 @@ description = "-sys crate for Rust darknet wrapper"
 readme = "./README.md"
 homepage = "https://github.com/alianse777/darknet-rust"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.51.1"
-copy_dir = "0.1.2"
-cc = "1.0.50"
+failure = "^0.1.0"
+bindgen = "^0.53.0"
+cmake = "^0.1.0"
+lazy_static = "^1.4.0"
 
+[features]
+buildtime-bindgen = []
+runtime = []
