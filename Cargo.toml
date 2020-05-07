@@ -6,7 +6,7 @@ edition = "2018"
 repository = "https://github.com/alianse777/darknet-sys-rust"
 license = "MIT"
 description = "-sys crate for Rust darknet wrapper"
-#documentation = ""
+documentation = "https://docs.rs/darknet-sys/"
 readme = "./README.md"
 homepage = "https://github.com/alianse777/darknet-rust"
 
