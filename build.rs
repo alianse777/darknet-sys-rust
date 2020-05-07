@@ -39,7 +39,7 @@ where
         "cargo:rustc-link-search=native={}",
         dst.join("build").display()
     );
-    println!("cargo:rustc-link-lib=darkd");
+    println!("cargo:rustc-link-lib=dark");
 
     gen_bindings(path.join("include"))?;
 
