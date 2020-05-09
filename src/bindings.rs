@@ -5470,6 +5470,7 @@ pub struct layer {
     pub flipped: ::std::os::raw::c_int,
     pub inputs: ::std::os::raw::c_int,
     pub outputs: ::std::os::raw::c_int,
+    pub mean_alpha: f32,
     pub nweights: ::std::os::raw::c_int,
     pub nbiases: ::std::os::raw::c_int,
     pub extra: ::std::os::raw::c_int,
@@ -5594,7 +5595,7 @@ pub struct layer {
     pub layers_output: *mut *mut f32,
     pub layers_delta: *mut *mut f32,
     pub weights_type: WEIGHTS_TYPE_T,
-    pub weights_normalizion: WEIGHTS_NORMALIZATION_T,
+    pub weights_normalization: WEIGHTS_NORMALIZATION_T,
     pub map: *mut ::std::os::raw::c_int,
     pub counts: *mut ::std::os::raw::c_int,
     pub sums: *mut *mut f32,
@@ -5617,6 +5618,7 @@ pub struct layer {
     pub weights: *mut f32,
     pub weight_updates: *mut f32,
     pub scale_x_y: f32,
+    pub objectness_smooth: ::std::os::raw::c_int,
     pub max_delta: f32,
     pub uc_normalizer: f32,
     pub iou_normalizer: f32,
@@ -5789,6 +5791,7 @@ pub struct layer {
     pub scale_change_gpu: *mut f32,
     pub input_antialiasing_gpu: *mut f32,
     pub output_gpu: *mut f32,
+    pub output_avg_gpu: *mut f32,
     pub activation_input_gpu: *mut f32,
     pub loss_gpu: *mut f32,
     pub delta_gpu: *mut f32,
@@ -5830,7 +5833,7 @@ pub struct layer {
 fn bindgen_test_layout_layer() {
     assert_eq!(
         ::std::mem::size_of::<layer>(),
-        2400usize,
+        2416usize,
         concat!("Size of: ", stringify!(layer))
     );
     assert_eq!(
@@ -6039,8 +6042,18 @@ fn bindgen_test_layout_layer() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<layer>())).nweights as *const _ as usize },
+        unsafe { &(*(::std::ptr::null::<layer>())).mean_alpha as *const _ as usize },
         112usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(layer),
+            "::",
+            stringify!(mean_alpha)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<layer>())).nweights as *const _ as usize },
+        116usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6050,7 +6063,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).nbiases as *const _ as usize },
-        116usize,
+        120usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6060,7 +6073,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).extra as *const _ as usize },
-        120usize,
+        124usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6070,7 +6083,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).truths as *const _ as usize },
-        124usize,
+        128usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6080,22 +6093,22 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).h as *const _ as usize },
-        128usize,
+        132usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(h))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).w as *const _ as usize },
-        132usize,
+        136usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(w))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).c as *const _ as usize },
-        136usize,
+        140usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(c))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).out_h as *const _ as usize },
-        140usize,
+        144usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6105,7 +6118,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).out_w as *const _ as usize },
-        144usize,
+        148usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6115,7 +6128,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).out_c as *const _ as usize },
-        148usize,
+        152usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6125,12 +6138,12 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).n as *const _ as usize },
-        152usize,
+        156usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(n))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).max_boxes as *const _ as usize },
-        156usize,
+        160usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6140,7 +6153,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).groups as *const _ as usize },
-        160usize,
+        164usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6150,7 +6163,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).group_id as *const _ as usize },
-        164usize,
+        168usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6160,7 +6173,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).size as *const _ as usize },
-        168usize,
+        172usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6170,7 +6183,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).side as *const _ as usize },
-        172usize,
+        176usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6180,7 +6193,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stride as *const _ as usize },
-        176usize,
+        180usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6190,7 +6203,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stride_x as *const _ as usize },
-        180usize,
+        184usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6200,7 +6213,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stride_y as *const _ as usize },
-        184usize,
+        188usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6210,7 +6223,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dilation as *const _ as usize },
-        188usize,
+        192usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6220,7 +6233,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).antialiasing as *const _ as usize },
-        192usize,
+        196usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6230,7 +6243,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).maxpool_depth as *const _ as usize },
-        196usize,
+        200usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6240,7 +6253,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).out_channels as *const _ as usize },
-        200usize,
+        204usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6250,7 +6263,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).reverse as *const _ as usize },
-        204usize,
+        208usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6260,7 +6273,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).flatten as *const _ as usize },
-        208usize,
+        212usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6270,7 +6283,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).spatial as *const _ as usize },
-        212usize,
+        216usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6280,7 +6293,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).pad as *const _ as usize },
-        216usize,
+        220usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6290,7 +6303,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).sqrt as *const _ as usize },
-        220usize,
+        224usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6300,7 +6313,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).flip as *const _ as usize },
-        224usize,
+        228usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6310,7 +6323,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).index as *const _ as usize },
-        228usize,
+        232usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6320,7 +6333,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scale_wh as *const _ as usize },
-        232usize,
+        236usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6330,7 +6343,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).binary as *const _ as usize },
-        236usize,
+        240usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6340,7 +6353,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).xnor as *const _ as usize },
-        240usize,
+        244usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6350,7 +6363,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).peephole as *const _ as usize },
-        244usize,
+        248usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6360,7 +6373,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).use_bin_output as *const _ as usize },
-        248usize,
+        252usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6370,7 +6383,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).keep_delta_gpu as *const _ as usize },
-        252usize,
+        256usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6380,7 +6393,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).optimized_memory as *const _ as usize },
-        256usize,
+        260usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6390,7 +6403,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).steps as *const _ as usize },
-        260usize,
+        264usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6400,7 +6413,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_constrain as *const _ as usize },
-        264usize,
+        268usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6410,7 +6423,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).hidden as *const _ as usize },
-        268usize,
+        272usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6420,7 +6433,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).truth as *const _ as usize },
-        272usize,
+        276usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6430,7 +6443,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).smooth as *const _ as usize },
-        276usize,
+        280usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6440,7 +6453,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dot as *const _ as usize },
-        280usize,
+        284usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6450,7 +6463,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).deform as *const _ as usize },
-        284usize,
+        288usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6460,7 +6473,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).sway as *const _ as usize },
-        288usize,
+        292usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6470,7 +6483,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).rotate as *const _ as usize },
-        292usize,
+        296usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6480,7 +6493,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stretch as *const _ as usize },
-        296usize,
+        300usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6490,7 +6503,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stretch_sway as *const _ as usize },
-        300usize,
+        304usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6500,7 +6513,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).angle as *const _ as usize },
-        304usize,
+        308usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6510,7 +6523,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).jitter as *const _ as usize },
-        308usize,
+        312usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6520,7 +6533,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).saturation as *const _ as usize },
-        312usize,
+        316usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6530,7 +6543,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).exposure as *const _ as usize },
-        316usize,
+        320usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6540,7 +6553,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).shift as *const _ as usize },
-        320usize,
+        324usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6550,7 +6563,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).ratio as *const _ as usize },
-        324usize,
+        328usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6560,7 +6573,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).learning_rate_scale as *const _ as usize },
-        328usize,
+        332usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6570,7 +6583,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).clip as *const _ as usize },
-        332usize,
+        336usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -6580,7 +6593,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).focal_loss as *const _ as usize },
-        336usize,
+        340usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7244,13 +7257,13 @@ fn bindgen_test_layout_layer() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<layer>())).weights_normalizion as *const _ as usize },
+        unsafe { &(*(::std::ptr::null::<layer>())).weights_normalization as *const _ as usize },
         644usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
             "::",
-            stringify!(weights_normalizion)
+            stringify!(weights_normalization)
         )
     );
     assert_eq!(
@@ -7474,8 +7487,18 @@ fn bindgen_test_layout_layer() {
         )
     );
     assert_eq!(
-        unsafe { &(*(::std::ptr::null::<layer>())).max_delta as *const _ as usize },
+        unsafe { &(*(::std::ptr::null::<layer>())).objectness_smooth as *const _ as usize },
         820usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(layer),
+            "::",
+            stringify!(objectness_smooth)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<layer>())).max_delta as *const _ as usize },
+        824usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7485,7 +7508,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).uc_normalizer as *const _ as usize },
-        824usize,
+        828usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7495,7 +7518,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).iou_normalizer as *const _ as usize },
-        828usize,
+        832usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7505,7 +7528,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).cls_normalizer as *const _ as usize },
-        832usize,
+        836usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7515,7 +7538,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).iou_loss as *const _ as usize },
-        836usize,
+        840usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7525,7 +7548,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).iou_thresh_kind as *const _ as usize },
-        840usize,
+        844usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7535,7 +7558,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).nms_kind as *const _ as usize },
-        844usize,
+        848usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7545,7 +7568,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).beta_nms as *const _ as usize },
-        848usize,
+        852usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7555,7 +7578,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).yolo_point as *const _ as usize },
-        852usize,
+        856usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7565,7 +7588,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).align_bit_weights_gpu as *const _ as usize },
-        856usize,
+        864usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7575,7 +7598,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).mean_arr_gpu as *const _ as usize },
-        864usize,
+        872usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7585,7 +7608,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).align_workspace_gpu as *const _ as usize },
-        872usize,
+        880usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7597,7 +7620,7 @@ fn bindgen_test_layout_layer() {
         unsafe {
             &(*(::std::ptr::null::<layer>())).transposed_align_workspace_gpu as *const _ as usize
         },
-        880usize,
+        888usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7607,7 +7630,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).align_workspace_size as *const _ as usize },
-        888usize,
+        896usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7617,7 +7640,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).align_bit_weights as *const _ as usize },
-        896usize,
+        904usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7627,7 +7650,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).mean_arr as *const _ as usize },
-        904usize,
+        912usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7637,7 +7660,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).align_bit_weights_size as *const _ as usize },
-        912usize,
+        920usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7647,7 +7670,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).lda_align as *const _ as usize },
-        916usize,
+        924usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7657,7 +7680,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).new_lda as *const _ as usize },
-        920usize,
+        928usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7667,7 +7690,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bit_align as *const _ as usize },
-        924usize,
+        932usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7677,7 +7700,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).col_image as *const _ as usize },
-        928usize,
+        936usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7687,7 +7710,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).delta as *const _ as usize },
-        936usize,
+        944usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7697,7 +7720,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).output as *const _ as usize },
-        944usize,
+        952usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7707,7 +7730,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).activation_input as *const _ as usize },
-        952usize,
+        960usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7717,7 +7740,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).delta_pinned as *const _ as usize },
-        960usize,
+        968usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7727,7 +7750,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).output_pinned as *const _ as usize },
-        964usize,
+        972usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7737,7 +7760,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).loss as *const _ as usize },
-        968usize,
+        976usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7747,7 +7770,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).squared as *const _ as usize },
-        976usize,
+        984usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7757,7 +7780,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).norms as *const _ as usize },
-        984usize,
+        992usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7767,7 +7790,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).spatial_mean as *const _ as usize },
-        992usize,
+        1000usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7777,7 +7800,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).mean as *const _ as usize },
-        1000usize,
+        1008usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7787,7 +7810,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).variance as *const _ as usize },
-        1008usize,
+        1016usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7797,7 +7820,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).mean_delta as *const _ as usize },
-        1016usize,
+        1024usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7807,7 +7830,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).variance_delta as *const _ as usize },
-        1024usize,
+        1032usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7817,7 +7840,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).rolling_mean as *const _ as usize },
-        1032usize,
+        1040usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7827,7 +7850,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).rolling_variance as *const _ as usize },
-        1040usize,
+        1048usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7837,12 +7860,12 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).x as *const _ as usize },
-        1048usize,
+        1056usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(x))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).x_norm as *const _ as usize },
-        1056usize,
+        1064usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7852,17 +7875,17 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).m as *const _ as usize },
-        1064usize,
+        1072usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(m))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).v as *const _ as usize },
-        1072usize,
+        1080usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(v))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bias_m as *const _ as usize },
-        1080usize,
+        1088usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7872,7 +7895,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bias_v as *const _ as usize },
-        1088usize,
+        1096usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7882,7 +7905,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scale_m as *const _ as usize },
-        1096usize,
+        1104usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7892,7 +7915,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scale_v as *const _ as usize },
-        1104usize,
+        1112usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7902,7 +7925,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).z_cpu as *const _ as usize },
-        1112usize,
+        1120usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7912,7 +7935,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).r_cpu as *const _ as usize },
-        1120usize,
+        1128usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7922,7 +7945,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).h_cpu as *const _ as usize },
-        1128usize,
+        1136usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7932,7 +7955,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stored_h_cpu as *const _ as usize },
-        1136usize,
+        1144usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7942,7 +7965,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).prev_state_cpu as *const _ as usize },
-        1144usize,
+        1152usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7952,7 +7975,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).temp_cpu as *const _ as usize },
-        1152usize,
+        1160usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7962,7 +7985,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).temp2_cpu as *const _ as usize },
-        1160usize,
+        1168usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7972,7 +7995,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).temp3_cpu as *const _ as usize },
-        1168usize,
+        1176usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7982,7 +8005,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dh_cpu as *const _ as usize },
-        1176usize,
+        1184usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -7992,7 +8015,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).hh_cpu as *const _ as usize },
-        1184usize,
+        1192usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8002,7 +8025,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).prev_cell_cpu as *const _ as usize },
-        1192usize,
+        1200usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8012,7 +8035,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).cell_cpu as *const _ as usize },
-        1200usize,
+        1208usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8022,7 +8045,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).f_cpu as *const _ as usize },
-        1208usize,
+        1216usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8032,7 +8055,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).i_cpu as *const _ as usize },
-        1216usize,
+        1224usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8042,7 +8065,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).g_cpu as *const _ as usize },
-        1224usize,
+        1232usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8052,7 +8075,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).o_cpu as *const _ as usize },
-        1232usize,
+        1240usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8062,7 +8085,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).c_cpu as *const _ as usize },
-        1240usize,
+        1248usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8072,7 +8095,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stored_c_cpu as *const _ as usize },
-        1248usize,
+        1256usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8082,7 +8105,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dc_cpu as *const _ as usize },
-        1256usize,
+        1264usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8092,7 +8115,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).binary_input as *const _ as usize },
-        1264usize,
+        1272usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8102,7 +8125,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bin_re_packed_input as *const _ as usize },
-        1272usize,
+        1280usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8112,7 +8135,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).t_bit_input as *const _ as usize },
-        1280usize,
+        1288usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8122,7 +8145,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_layer as *const _ as usize },
-        1288usize,
+        1296usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8132,7 +8155,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).self_layer as *const _ as usize },
-        1296usize,
+        1304usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8142,7 +8165,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).output_layer as *const _ as usize },
-        1304usize,
+        1312usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8152,7 +8175,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).reset_layer as *const _ as usize },
-        1312usize,
+        1320usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8162,7 +8185,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).update_layer as *const _ as usize },
-        1320usize,
+        1328usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8172,7 +8195,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_layer as *const _ as usize },
-        1328usize,
+        1336usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8182,7 +8205,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_gate_layer as *const _ as usize },
-        1336usize,
+        1344usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8192,7 +8215,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_gate_layer as *const _ as usize },
-        1344usize,
+        1352usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8202,7 +8225,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_save_layer as *const _ as usize },
-        1352usize,
+        1360usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8212,7 +8235,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_save_layer as *const _ as usize },
-        1360usize,
+        1368usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8222,7 +8245,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_state_layer as *const _ as usize },
-        1368usize,
+        1376usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8232,7 +8255,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_state_layer as *const _ as usize },
-        1376usize,
+        1384usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8242,7 +8265,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_z_layer as *const _ as usize },
-        1384usize,
+        1392usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8252,7 +8275,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_z_layer as *const _ as usize },
-        1392usize,
+        1400usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8262,7 +8285,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_r_layer as *const _ as usize },
-        1400usize,
+        1408usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8272,7 +8295,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_r_layer as *const _ as usize },
-        1408usize,
+        1416usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8282,7 +8305,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_h_layer as *const _ as usize },
-        1416usize,
+        1424usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8292,7 +8315,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_h_layer as *const _ as usize },
-        1424usize,
+        1432usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8302,92 +8325,92 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).wz as *const _ as usize },
-        1432usize,
+        1440usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(wz))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).uz as *const _ as usize },
-        1440usize,
+        1448usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(uz))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).wr as *const _ as usize },
-        1448usize,
+        1456usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(wr))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).ur as *const _ as usize },
-        1456usize,
+        1464usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(ur))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).wh as *const _ as usize },
-        1464usize,
+        1472usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(wh))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).uh as *const _ as usize },
-        1472usize,
+        1480usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(uh))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).uo as *const _ as usize },
-        1480usize,
+        1488usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(uo))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).wo as *const _ as usize },
-        1488usize,
+        1496usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(wo))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).vo as *const _ as usize },
-        1496usize,
+        1504usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(vo))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).uf as *const _ as usize },
-        1504usize,
+        1512usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(uf))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).wf as *const _ as usize },
-        1512usize,
+        1520usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(wf))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).vf as *const _ as usize },
-        1520usize,
+        1528usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(vf))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).ui as *const _ as usize },
-        1528usize,
+        1536usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(ui))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).wi as *const _ as usize },
-        1536usize,
+        1544usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(wi))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).vi as *const _ as usize },
-        1544usize,
+        1552usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(vi))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).ug as *const _ as usize },
-        1552usize,
+        1560usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(ug))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).wg as *const _ as usize },
-        1560usize,
+        1568usize,
         concat!("Offset of field: ", stringify!(layer), "::", stringify!(wg))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).softmax_tree as *const _ as usize },
-        1568usize,
+        1576usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8397,7 +8420,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).workspace_size as *const _ as usize },
-        1576usize,
+        1584usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8407,7 +8430,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).indexes_gpu as *const _ as usize },
-        1584usize,
+        1592usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8417,7 +8440,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).z_gpu as *const _ as usize },
-        1592usize,
+        1600usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8427,7 +8450,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).r_gpu as *const _ as usize },
-        1600usize,
+        1608usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8437,7 +8460,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).h_gpu as *const _ as usize },
-        1608usize,
+        1616usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8447,7 +8470,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stored_h_gpu as *const _ as usize },
-        1616usize,
+        1624usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8457,7 +8480,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).temp_gpu as *const _ as usize },
-        1624usize,
+        1632usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8467,7 +8490,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).temp2_gpu as *const _ as usize },
-        1632usize,
+        1640usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8477,7 +8500,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).temp3_gpu as *const _ as usize },
-        1640usize,
+        1648usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8487,7 +8510,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dh_gpu as *const _ as usize },
-        1648usize,
+        1656usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8497,7 +8520,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).hh_gpu as *const _ as usize },
-        1656usize,
+        1664usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8507,7 +8530,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).prev_cell_gpu as *const _ as usize },
-        1664usize,
+        1672usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8517,7 +8540,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).prev_state_gpu as *const _ as usize },
-        1672usize,
+        1680usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8527,7 +8550,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).last_prev_state_gpu as *const _ as usize },
-        1680usize,
+        1688usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8537,7 +8560,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).last_prev_cell_gpu as *const _ as usize },
-        1688usize,
+        1696usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8547,7 +8570,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).cell_gpu as *const _ as usize },
-        1696usize,
+        1704usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8557,7 +8580,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).f_gpu as *const _ as usize },
-        1704usize,
+        1712usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8567,7 +8590,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).i_gpu as *const _ as usize },
-        1712usize,
+        1720usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8577,7 +8600,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).g_gpu as *const _ as usize },
-        1720usize,
+        1728usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8587,7 +8610,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).o_gpu as *const _ as usize },
-        1728usize,
+        1736usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8597,7 +8620,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).c_gpu as *const _ as usize },
-        1736usize,
+        1744usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8607,7 +8630,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).stored_c_gpu as *const _ as usize },
-        1744usize,
+        1752usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8617,7 +8640,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dc_gpu as *const _ as usize },
-        1752usize,
+        1760usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8627,7 +8650,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).m_gpu as *const _ as usize },
-        1760usize,
+        1768usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8637,7 +8660,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).v_gpu as *const _ as usize },
-        1768usize,
+        1776usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8647,7 +8670,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bias_m_gpu as *const _ as usize },
-        1776usize,
+        1784usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8657,7 +8680,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scale_m_gpu as *const _ as usize },
-        1784usize,
+        1792usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8667,7 +8690,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bias_v_gpu as *const _ as usize },
-        1792usize,
+        1800usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8677,7 +8700,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scale_v_gpu as *const _ as usize },
-        1800usize,
+        1808usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8687,7 +8710,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).combine_gpu as *const _ as usize },
-        1808usize,
+        1816usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8697,7 +8720,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).combine_delta_gpu as *const _ as usize },
-        1816usize,
+        1824usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8707,7 +8730,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).forgot_state_gpu as *const _ as usize },
-        1824usize,
+        1832usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8717,7 +8740,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).forgot_delta_gpu as *const _ as usize },
-        1832usize,
+        1840usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8727,7 +8750,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_gpu as *const _ as usize },
-        1840usize,
+        1848usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8737,7 +8760,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).state_delta_gpu as *const _ as usize },
-        1848usize,
+        1856usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8747,7 +8770,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).gate_gpu as *const _ as usize },
-        1856usize,
+        1864usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8757,7 +8780,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).gate_delta_gpu as *const _ as usize },
-        1864usize,
+        1872usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8767,7 +8790,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).save_gpu as *const _ as usize },
-        1872usize,
+        1880usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8777,7 +8800,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).save_delta_gpu as *const _ as usize },
-        1880usize,
+        1888usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8787,7 +8810,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).concat_gpu as *const _ as usize },
-        1888usize,
+        1896usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8797,7 +8820,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).concat_delta_gpu as *const _ as usize },
-        1896usize,
+        1904usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8807,7 +8830,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).binary_input_gpu as *const _ as usize },
-        1904usize,
+        1912usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8817,7 +8840,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).binary_weights_gpu as *const _ as usize },
-        1912usize,
+        1920usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8827,7 +8850,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bin_conv_shortcut_in_gpu as *const _ as usize },
-        1920usize,
+        1928usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8837,7 +8860,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bin_conv_shortcut_out_gpu as *const _ as usize },
-        1928usize,
+        1936usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8847,7 +8870,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).mean_gpu as *const _ as usize },
-        1936usize,
+        1944usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8857,7 +8880,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).variance_gpu as *const _ as usize },
-        1944usize,
+        1952usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8867,7 +8890,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).m_cbn_avg_gpu as *const _ as usize },
-        1952usize,
+        1960usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8877,7 +8900,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).v_cbn_avg_gpu as *const _ as usize },
-        1960usize,
+        1968usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8887,7 +8910,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).rolling_mean_gpu as *const _ as usize },
-        1968usize,
+        1976usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8897,7 +8920,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).rolling_variance_gpu as *const _ as usize },
-        1976usize,
+        1984usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8907,7 +8930,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).variance_delta_gpu as *const _ as usize },
-        1984usize,
+        1992usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8917,7 +8940,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).mean_delta_gpu as *const _ as usize },
-        1992usize,
+        2000usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8927,7 +8950,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).col_image_gpu as *const _ as usize },
-        2000usize,
+        2008usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8937,7 +8960,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).x_gpu as *const _ as usize },
-        2008usize,
+        2016usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8947,7 +8970,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).x_norm_gpu as *const _ as usize },
-        2016usize,
+        2024usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8957,7 +8980,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weights_gpu as *const _ as usize },
-        2024usize,
+        2032usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8967,7 +8990,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weight_updates_gpu as *const _ as usize },
-        2032usize,
+        2040usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8977,7 +9000,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weight_deform_gpu as *const _ as usize },
-        2040usize,
+        2048usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8987,7 +9010,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weight_change_gpu as *const _ as usize },
-        2048usize,
+        2056usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -8997,7 +9020,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weights_gpu16 as *const _ as usize },
-        2056usize,
+        2064usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9007,7 +9030,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weight_updates_gpu16 as *const _ as usize },
-        2064usize,
+        2072usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9017,7 +9040,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).biases_gpu as *const _ as usize },
-        2072usize,
+        2080usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9027,7 +9050,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bias_updates_gpu as *const _ as usize },
-        2080usize,
+        2088usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9037,7 +9060,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bias_change_gpu as *const _ as usize },
-        2088usize,
+        2096usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9047,7 +9070,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scales_gpu as *const _ as usize },
-        2096usize,
+        2104usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9057,7 +9080,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scale_updates_gpu as *const _ as usize },
-        2104usize,
+        2112usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9067,7 +9090,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).scale_change_gpu as *const _ as usize },
-        2112usize,
+        2120usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9077,7 +9100,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_antialiasing_gpu as *const _ as usize },
-        2120usize,
+        2128usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9087,7 +9110,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).output_gpu as *const _ as usize },
-        2128usize,
+        2136usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9096,8 +9119,18 @@ fn bindgen_test_layout_layer() {
         )
     );
     assert_eq!(
+        unsafe { &(*(::std::ptr::null::<layer>())).output_avg_gpu as *const _ as usize },
+        2144usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(layer),
+            "::",
+            stringify!(output_avg_gpu)
+        )
+    );
+    assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).activation_input_gpu as *const _ as usize },
-        2136usize,
+        2152usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9107,7 +9140,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).loss_gpu as *const _ as usize },
-        2144usize,
+        2160usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9117,7 +9150,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).delta_gpu as *const _ as usize },
-        2152usize,
+        2168usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9127,7 +9160,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).rand_gpu as *const _ as usize },
-        2160usize,
+        2176usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9137,7 +9170,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).drop_blocks_scale as *const _ as usize },
-        2168usize,
+        2184usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9147,7 +9180,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).drop_blocks_scale_gpu as *const _ as usize },
-        2176usize,
+        2192usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9157,7 +9190,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).squared_gpu as *const _ as usize },
-        2184usize,
+        2200usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9167,7 +9200,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).norms_gpu as *const _ as usize },
-        2192usize,
+        2208usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9177,7 +9210,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).gt_gpu as *const _ as usize },
-        2200usize,
+        2216usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9187,7 +9220,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).a_avg_gpu as *const _ as usize },
-        2208usize,
+        2224usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9197,7 +9230,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).input_sizes_gpu as *const _ as usize },
-        2216usize,
+        2232usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9207,7 +9240,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).layers_output_gpu as *const _ as usize },
-        2224usize,
+        2240usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9217,7 +9250,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).layers_delta_gpu as *const _ as usize },
-        2232usize,
+        2248usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9227,7 +9260,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).srcTensorDesc as *const _ as usize },
-        2240usize,
+        2256usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9237,7 +9270,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dstTensorDesc as *const _ as usize },
-        2248usize,
+        2264usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9247,7 +9280,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).srcTensorDesc16 as *const _ as usize },
-        2256usize,
+        2272usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9257,7 +9290,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dstTensorDesc16 as *const _ as usize },
-        2264usize,
+        2280usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9267,7 +9300,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dsrcTensorDesc as *const _ as usize },
-        2272usize,
+        2288usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9277,7 +9310,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).ddstTensorDesc as *const _ as usize },
-        2280usize,
+        2296usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9287,7 +9320,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dsrcTensorDesc16 as *const _ as usize },
-        2288usize,
+        2304usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9297,7 +9330,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).ddstTensorDesc16 as *const _ as usize },
-        2296usize,
+        2312usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9307,7 +9340,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).normTensorDesc as *const _ as usize },
-        2304usize,
+        2320usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9317,7 +9350,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).normDstTensorDesc as *const _ as usize },
-        2312usize,
+        2328usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9327,7 +9360,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).normDstTensorDescF16 as *const _ as usize },
-        2320usize,
+        2336usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9337,7 +9370,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weightDesc as *const _ as usize },
-        2328usize,
+        2344usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9347,7 +9380,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).weightDesc16 as *const _ as usize },
-        2336usize,
+        2352usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9357,7 +9390,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dweightDesc as *const _ as usize },
-        2344usize,
+        2360usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9367,7 +9400,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).dweightDesc16 as *const _ as usize },
-        2352usize,
+        2368usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9377,7 +9410,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).convDesc as *const _ as usize },
-        2360usize,
+        2376usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9387,7 +9420,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).fw_algo as *const _ as usize },
-        2368usize,
+        2384usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9397,7 +9430,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).fw_algo16 as *const _ as usize },
-        2372usize,
+        2388usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9407,7 +9440,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bd_algo as *const _ as usize },
-        2376usize,
+        2392usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9417,7 +9450,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bd_algo16 as *const _ as usize },
-        2380usize,
+        2396usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9427,7 +9460,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bf_algo as *const _ as usize },
-        2384usize,
+        2400usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9437,7 +9470,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).bf_algo16 as *const _ as usize },
-        2388usize,
+        2404usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
@@ -9447,7 +9480,7 @@ fn bindgen_test_layout_layer() {
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<layer>())).poolingDesc as *const _ as usize },
-        2392usize,
+        2408usize,
         concat!(
             "Offset of field: ",
             stringify!(layer),
