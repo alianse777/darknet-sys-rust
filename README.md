@@ -1,3 +1,4 @@
+Main crate: [darknet](https://crates.io/crates/darknet)
 # darknet-sys: FFI bindings to AlexeyAB's Darknet
 
 Version 0.2.0 changes:
