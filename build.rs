@@ -1,4 +1,5 @@
 use failure::{format_err, Fallible};
+use std::fs;
 use std::{
     env,
     path::{Path, PathBuf},
@@ -8,7 +9,8 @@ const DARKNET_SRC_ENV: &'static str = "DARKNET_SRC";
 const DARKNET_INCLUDE_PATH_ENV: &'static str = "DARKNET_INCLUDE_PATH";
 
 lazy_static::lazy_static! {
-    static ref BINDINGS_TARGET_PATH: PathBuf = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
+    static ref BINDINGS_SRC_PATH: PathBuf = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
+    static ref BINDINGS_TARGET_PATH: PathBuf = PathBuf::from(env::var("OUT_DIR").expect("Failed to get OUT_DIR")).join("bindings.rs");
 }
 
 // Guess the cmake profile using the rule defined in the link.
@@ -123,6 +125,9 @@ fn build_runtime() -> Fallible<()> {
                     .join("include")
             });
         gen_bindings(include_path)?;
+    } else {
+        fs::copy(&*BINDINGS_SRC_PATH, &*BINDINGS_TARGET_PATH)
+            .expect("Failed to copy bindings.rs to OUT_DIR");
     }
 
     Ok(())
