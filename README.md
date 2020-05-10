@@ -1,12 +1,10 @@
 # darknet-sys: FFI bindings to AlexeyAB's Darknet
 
-It is a fork of alianse777's [darknet-sys](https://github.com/alianse777/darknet-sys-rust) with several improvements.
+Version 0.2.0 changes:
 
 - Replace the unmaintained pjreddie's darknet to AlexeyAB's darknet fork.
 - Users can optionally link at runtime without compiling the source code.
 - Configurable source code path and include path.
-
-The work is not yet merged to alianse777's [darknet](https://github.com/pjreddie/darknet) because it incurs breaking changes.
 
 ## Usage
 
