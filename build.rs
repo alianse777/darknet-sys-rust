@@ -100,7 +100,6 @@ where
     let path = path.as_ref();
     let dst = cmake::Config::new(path)
         .define("BUILD_SHARED_LIBS", "OFF")
-        .out_dir(PathBuf::from(env::var("OUT_DIR").expect("Failed to get OUT_DIR")))
         .build();
     println!(
         "cargo:rustc-link-search=native={}",
