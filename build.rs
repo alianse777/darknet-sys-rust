@@ -98,7 +98,7 @@ where
     P: AsRef<Path>,
 {
     let path = path.as_ref();
-    let dst = cmake::Config::new(path).build();
+    let dst = cmake::Config::new(path).define("BUILD_SHARED_LIBS", "OFF").build();
     println!(
         "cargo:rustc-link-search=native={}",
         dst.join("build").display()
