@@ -97,6 +97,11 @@ fn build_with_cmake<P>(path: P) -> Fallible<()>
 where
     P: AsRef<Path>,
 {
+    let link = if cfg!(feature = "link-dynamic") {
+        "dylib"
+    } else {
+        "static"
+    };
     let path = path.as_ref();
     let dst = cmake::Config::new(path)
         .define(
@@ -109,21 +114,15 @@ where
         )
         .build();
     println!(
-        "cargo:rustc-link-search={}={}",
-        if cfg!(feature = "link-dynamic") {
-            "dynamic"
-        } else {
-            "static"
-        },
+        "cargo:rustc-link-search={}",
         dst.join("build").display()
     );
 
     // link to different target under distinct profiles
     match guess_cmake_profile() {
-        "Debug" => println!("cargo:rustc-link-lib=darkd"),
-        _ => println!("cargo:rustc-link-lib=dark"),
+        "Debug" => println!("cargo:rustc-link-lib={}=darkd", link),
+        _ => println!("cargo:rustc-link-lib={}=dark", link),
     }
-
     gen_bindings(path.join("include"))?;
 
     Ok(())
