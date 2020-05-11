@@ -16,8 +16,7 @@ There are two ways to generate the bindings:
 - Building from source (default)
 - Runtime linking
 
-By default, it builds the darknet as a static library from submodule if there is no additional environment variables and features.
-If you want to use dynamic linking, enable 'link-dynamic' feature.
+By default, it builds the darknet from submodule if there is no additional environment variables and features.
 
 ### Method 1: Build from source
 
