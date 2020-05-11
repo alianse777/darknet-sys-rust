@@ -99,10 +99,22 @@ where
 {
     let path = path.as_ref();
     let dst = cmake::Config::new(path)
-        .define("BUILD_SHARED_LIBS", "OFF")
+        .define(
+            "BUILD_SHARED_LIBS",
+            if cfg!(feature = "link-dynamic") {
+                "ON"
+            } else {
+                "OFF"
+            },
+        )
         .build();
     println!(
-        "cargo:rustc-link-search=native={}",
+        "cargo:rustc-link-search={}={}",
+        if cfg!(feature = "link-dynamic") {
+            "dynamic"
+        } else {
+            "static"
+        },
         dst.join("build").display()
     );
 

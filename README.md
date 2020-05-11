@@ -16,18 +16,15 @@ There are two ways to generate the bindings:
 - Building from source (default)
 - Runtime linking
 
-By default, it builds the darknet from submodule if there is no additional environment variables and features.
-
-```sh
-cargo build
-```
+By default, it builds the darknet as a static library from submodule if there is no additional environment variables and features.
+If you want to use dynamic linking, enable 'link-dynamic' feature.
 
 ### Method 1: Build from source
 
 It is the default behavior. If you would like to build your own source, you can set the `DARKNET_SRC` environment variables to the path of your repository. Note that it expects a `CMakeLists.txt` in your repository.
 
 ```sh
-export DARKNET_SRC=/path/to/your/darknet/repo
+export DARKNET_SRC=/path/to/your/darknet/repo # if you would like to build your own source
 cargo build
 ```
 
@@ -35,7 +32,6 @@ cargo build
 
 If you prefer not to build the source code and use the generated bindings already built in our repository, add the `runtime` feature to take effect.
 
-In this way, you have to make sure your program can find the shared library in standard paths in runtime, such as `/usr/lib/libdarkd.so` on Linux. Otherwise, you have to add additional search paths to the `LD_LIBRARY_PATH` environment variable.
 
 ```sh
 cargo build --feature runtime
