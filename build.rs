@@ -94,7 +94,7 @@ where
 }
 
 fn is_dynamic() -> bool {
-    return true;
+    return cfg!(feature = "dylib");
 }
 
 fn build_with_cmake<P>(path: P) -> Fallible<()>
@@ -113,6 +113,11 @@ where
         "Debug" => println!("cargo:rustc-link-lib={}=darkd", link),
         _ => println!("cargo:rustc-link-lib={}=dark", link),
     }
+    if !is_dynamic() {
+        println!("cargo:rustc-link-lib=gomp");
+        println!("cargo:rustc-link-lib=stdc++");
+    }
+
     gen_bindings(path.join("include"))?;
 
     Ok(())
