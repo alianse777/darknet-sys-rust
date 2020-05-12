@@ -21,4 +21,3 @@ lazy_static = "^1.4.0"
 [features]
 buildtime-bindgen = []
 runtime = []
-link-dynamic = []
