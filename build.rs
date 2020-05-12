@@ -93,30 +93,20 @@ where
     Ok(())
 }
 
+fn is_dynamic() -> bool {
+    return true;
+}
+
 fn build_with_cmake<P>(path: P) -> Fallible<()>
 where
     P: AsRef<Path>,
 {
-    let link = if cfg!(feature = "link-dynamic") {
-        "dylib"
-    } else {
-        "static"
-    };
+    let link = if is_dynamic() { "dylib" } else { "static" };
     let path = path.as_ref();
     let dst = cmake::Config::new(path)
-        .define(
-            "BUILD_SHARED_LIBS",
-            if cfg!(feature = "link-dynamic") {
-                "ON"
-            } else {
-                "OFF"
-            },
-        )
+        .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
         .build();
-    println!(
-        "cargo:rustc-link-search={}",
-        dst.join("build").display()
-    );
+    println!("cargo:rustc-link-search={}", dst.join("build").display());
 
     // link to different target under distinct profiles
     match guess_cmake_profile() {
