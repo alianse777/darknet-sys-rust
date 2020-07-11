@@ -1,6 +1,6 @@
 [package]
 name = "darknet-sys"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["alianse77"]
 edition = "2018"
 repository = "https://github.com/alianse777/darknet-sys-rust"
@@ -22,3 +22,7 @@ lazy_static = "^1.4.0"
 buildtime-bindgen = []
 runtime = []
 dylib = []
+docs-rs = []
+
+["package.metadata.docs.rs"]
+features = ["docs-rs"]
