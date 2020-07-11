@@ -158,7 +158,9 @@ fn main() -> Fallible<()> {
         "cargo:rerun-if-env-changed={}",
         BINDINGS_TARGET_PATH.display()
     );
-
+    if cfg!(feature = "docs-rs") {
+        return Ok(());
+    }
     // build from source by default
     if cfg!(feature = "runtime") {
         build_runtime()?;
