@@ -11,6 +11,50 @@ const DARKNET_INCLUDE_PATH_ENV: &'static str = "DARKNET_INCLUDE_PATH";
 lazy_static::lazy_static! {
     static ref BINDINGS_SRC_PATH: PathBuf = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
     static ref BINDINGS_TARGET_PATH: PathBuf = PathBuf::from(env::var("OUT_DIR").expect("Failed to get OUT_DIR")).join("bindings.rs");
+    static ref LIBRARY_PATH: PathBuf = PathBuf::from(env::var("OUT_DIR").expect("Failed to get OUT_DIR")).join("darknet");
+}
+
+// Recursively copy directory
+// Ref: https://stackoverflow.com/a/60406693
+pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<(), std::io::Error> {
+    let mut stack = Vec::new();
+    stack.push(PathBuf::from(from.as_ref()));
+    let output_root = PathBuf::from(to.as_ref());
+    let input_root = PathBuf::from(from.as_ref()).components().count();
+    while let Some(working_path) = stack.pop() {
+        println!("process: {:?}", &working_path);
+        // Generate a relative path
+        let src: PathBuf = working_path.components().skip(input_root).collect();
+        // Create a destination if missing
+        let dest = if src.components().count() == 0 {
+            output_root.clone()
+        } else {
+            output_root.join(&src)
+        };
+        if fs::metadata(&dest).is_err() {
+            println!(" mkdir: {:?}", dest);
+            fs::create_dir_all(&dest)?;
+        }
+        for entry in fs::read_dir(working_path)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                stack.push(path);
+            } else {
+                match path.file_name() {
+                    Some(filename) => {
+                        let dest_path = dest.join(filename);
+                        println!("  copy: {:?} -> {:?}", &path, &dest_path);
+                        fs::copy(&path, &dest_path)?;
+                    }
+                    None => {
+                        println!("failed: {:?}", path);
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
 }
 
 // Guess the cmake profile using the rule defined in the link.
@@ -111,6 +155,8 @@ where
 {
     let link = if is_dynamic() { "dylib" } else { "static" };
     let path = path.as_ref();
+    copy(path, LIBRARY_PATH.as_path())?;
+    let path = LIBRARY_PATH.as_path();
     let dst = cmake::Config::new(path)
         .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
         .define("ENABLE_CUDA", if is_cuda_enabled() { "ON" } else { "OFF" })
@@ -172,7 +218,9 @@ fn main() -> Fallible<()> {
         "cargo:rerun-if-env-changed={}",
         BINDINGS_TARGET_PATH.display()
     );
-
+    if cfg!(feature = "docs-rs") {
+        return Ok(());
+    }
     // build from source by default
     if cfg!(feature = "runtime") {
         build_runtime()?;
