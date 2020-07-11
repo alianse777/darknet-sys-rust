@@ -141,6 +141,14 @@ fn is_dynamic() -> bool {
     return cfg!(feature = "dylib");
 }
 
+fn is_cuda_enabled() -> bool {
+    cfg!(feature = "enable-cuda")
+}
+
+fn is_opencv_enabled() -> bool {
+    cfg!(feature = "enable-opencv")
+}
+
 fn build_with_cmake<P>(path: P) -> Fallible<()>
 where
     P: AsRef<Path>,
@@ -151,6 +159,12 @@ where
     let path = LIBRARY_PATH.as_path();
     let dst = cmake::Config::new(path)
         .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
+        .define("ENABLE_CUDA", if is_cuda_enabled() { "ON" } else { "OFF" })
+        .define("ENABLE_CUDNN", if is_cuda_enabled() { "ON" } else { "OFF" })
+        .define(
+            "ENABLE_OPENCV",
+            if is_opencv_enabled() { "ON" } else { "OFF" },
+        )
         .build();
     println!("cargo:rustc-link-search={}", dst.join("build").display());
 
