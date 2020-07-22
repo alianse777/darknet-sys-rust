@@ -44,4 +44,7 @@ The `buildtime-bindgen` allows you to re-generate bindings from headers without 
 export DARKNET_INCLUDE_PATH=/path/to/your/header/dir
 cargo build --feature runtime,buildtime-bindgen
 ```
+
+## Credits
+
 Huge thanks to [jerry73204](https://github.com/jerry73204)
