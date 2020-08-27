@@ -2,12 +2,6 @@ Main crate: [darknet](https://crates.io/crates/darknet)
 
 # darknet-sys: FFI bindings to AlexeyAB's Darknet
 
-Version 0.2.0 changes:
-
-- Replace the unmaintained pjreddie's darknet to AlexeyAB's darknet fork.
-- Users can optionally link at runtime without compiling the source code.
-- Configurable source code path and include path.
-
 ## Usage
 
 Get the crate by adding the dependency to your `Cargo.toml`.
