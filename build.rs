@@ -158,6 +158,7 @@ where
     copy(path, LIBRARY_PATH.as_path())?;
     let path = LIBRARY_PATH.as_path();
     let dst = cmake::Config::new(path)
+        .uses_cxx11()
         .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
         .define("ENABLE_CUDA", if is_cuda_enabled() { "ON" } else { "OFF" })
         .define("ENABLE_CUDNN", if is_cuda_enabled() { "ON" } else { "OFF" })
@@ -176,6 +177,12 @@ where
     if !is_dynamic() {
         println!("cargo:rustc-link-lib=gomp");
         println!("cargo:rustc-link-lib=stdc++");
+        if is_cuda_enabled() {
+            println!("cargo:rustc-link-lib=cudart");
+            println!("cargo:rustc-link-lib=cudnn");
+            println!("cargo:rustc-link-lib=cublas");
+            println!("cargo:rustc-link-lib=curand");
+        }
     }
 
     gen_bindings(path.join("include"))?;
