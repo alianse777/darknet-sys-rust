@@ -1,4 +1,4 @@
-use failure::{format_err, Fallible};
+use anyhow::{format_err, Result};
 use std::fs;
 use std::{
     env,
@@ -119,7 +119,7 @@ fn guess_cmake_profile() -> &'static str {
     }
 }
 
-fn gen_bindings<P>(include_path: P) -> Fallible<()>
+fn gen_bindings<P>(include_path: P) -> Result<()>
 where
     P: AsRef<Path>,
 {
@@ -149,7 +149,7 @@ fn is_opencv_enabled() -> bool {
     cfg!(feature = "enable-opencv")
 }
 
-fn build_with_cmake<P>(path: P) -> Fallible<()>
+fn build_with_cmake<P>(path: P) -> Result<()>
 where
     P: AsRef<Path>,
 {
@@ -158,6 +158,7 @@ where
     copy(path, LIBRARY_PATH.as_path())?;
     let path = LIBRARY_PATH.as_path();
     let dst = cmake::Config::new(path)
+        .uses_cxx11()
         .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
         .define("ENABLE_CUDA", if is_cuda_enabled() { "ON" } else { "OFF" })
         .define("ENABLE_CUDNN", if is_cuda_enabled() { "ON" } else { "OFF" })
@@ -176,6 +177,12 @@ where
     if !is_dynamic() {
         println!("cargo:rustc-link-lib=gomp");
         println!("cargo:rustc-link-lib=stdc++");
+        if is_cuda_enabled() {
+            println!("cargo:rustc-link-lib=cudart");
+            println!("cargo:rustc-link-lib=cudnn");
+            println!("cargo:rustc-link-lib=cublas");
+            println!("cargo:rustc-link-lib=curand");
+        }
     }
 
     gen_bindings(path.join("include"))?;
@@ -183,7 +190,7 @@ where
     Ok(())
 }
 
-fn build_runtime() -> Fallible<()> {
+fn build_runtime() -> Result<()> {
     if cfg!(feature = "buildtime-bindgen") {
         let include_path = env::var_os(DARKNET_INCLUDE_PATH_ENV)
             .map(|value| PathBuf::from(value))
@@ -201,7 +208,7 @@ fn build_runtime() -> Fallible<()> {
     Ok(())
 }
 
-fn build_from_source() -> Fallible<()> {
+fn build_from_source() -> Result<()> {
     let src_dir: PathBuf = match env::var_os(DARKNET_SRC_ENV) {
         Some(src) => src.into(),
         None => PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("darknet"),
@@ -211,7 +218,7 @@ fn build_from_source() -> Fallible<()> {
     Ok(())
 }
 
-fn main() -> Fallible<()> {
+fn main() -> Result<()> {
     println!("cargo:rerun-if-env-changed={}", DARKNET_SRC_ENV);
     println!("cargo:rerun-if-env-changed={}", DARKNET_INCLUDE_PATH_ENV);
     println!(

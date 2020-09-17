@@ -1,49 +1,80 @@
 Main crate: [darknet](https://crates.io/crates/darknet)
+
 # darknet-sys: FFI bindings to AlexeyAB's Darknet
-
-Version 0.2.0 changes:
-
-- Replace the unmaintained pjreddie's darknet to AlexeyAB's darknet fork.
-- Users can optionally link at runtime without compiling the source code.
-- Configurable source code path and include path.
 
 ## Usage
 
-To ensure the git submodules are tracked, please run `git submodule init && git submodule update --recursive` after you clone this repository.
+Get the crate by adding the dependency to your `Cargo.toml`.
 
-There are two ways to generate the bindings:
+```toml
+darknet-sys = "0.2"
+```
 
-- Building from source (default)
-- Runtime linking
+If you clone the repository manually, run `git submodule init && git submodule update --recursive` to get all submodules.
 
-By default, it builds the darknet static library from submodule if there is no additional environment variables and features. 
+## Cargo Features
 
-If you want to build dynamic library, enable 'dylib' feature.
+- `enable-cuda`: Enable CUDA (expects CUDA 10.x and cuDNN 7.x).
+- `enable-cuda`: Enable OpenCV.
+- `runtime`: Link to darknet dynamic library. For example, `libdark.so` on Linux.
+- `buildtime-bindgen`: Generate bindings from darknet headers.
 
-### Method 1: Build from source
+## Build
 
-It is the default behavior. If you would like to build your own source, you can set the `DARKNET_SRC` environment variables to the path of your repository. Note that it expects a `CMakeLists.txt` in your repository.
+By default, darknet-sys compiles and link to darknet statically. You can control the feature flags to change the behavior.
+
+### Method 1: Download and build from source (default)
+
+By default, it builds and links to darknet statically.
 
 ```sh
-export DARKNET_SRC=/path/to/your/darknet/repo # if you would like to build your own source
 cargo build
 ```
 
-### Method 2: Runtime linking
+You can optionally enable CUDA and OpenCV features. Please read [Build with CUDA](#build-with-cuda) section to work to CUDA properly.
 
-If you prefer not to build the source code and use the generated bindings already built in our repository, add the `runtime` feature to take effect.
+```sh
+cargo build --features enable-cuda,enable-opencv
+```
+
+### Method 2: Build with custom source
+
+If you prefer to build with your darknet source, fill the source directory to the `DARKNET_SRC` environment variable. It expects a `CMakeLists.txt` in that directory.
+
+```sh
+export DARKNET_SRC=/path/to/your/darknet/repo
+cargo build
+```
+
+### Method 3: Link to darknet dynamic library
+
+With `runtime` feature, darknet-sys will not compile the darknet source code and instead links to darknet dynamically. If you are using Linux, make sure `libdark.so` is installed on your system.
 
 
 ```sh
 cargo build --feature runtime
 ```
 
-The `buildtime-bindgen` allows you to re-generate bindings from headers without compiling the source code. By default, it finds the header files from the shipped darknet submodule. If you would like to provide your own header files, please set `DARKNET_INCLUDE_PATH` the environment variable.
+### Re-generate bindings
+
+With `buildtime-bindgen` feature, darknet-sys re-generates bindings from headers. It guesses the header file paths according to feature flags. The option is necessary only when darkent is updated or modified.
+
+If you prefer to your (possibly modified) header files, fill the header directory to `DARKNET_INCLUDE_PATH` environment variable.
+
+### Build with CUDA
+
+Please check both CUDA 10.x and cuDNN 7.x are installed and versions are correct.
+
+They are not installed to standard paths on most systems. Please add the CUDA library directory to `LIBRARY_PATH` environment variable before building. For example on Ubuntu and CUDA 10.1,
 
 ```sh
-export DARKNET_INCLUDE_PATH=/path/to/your/header/dir
-cargo build --feature runtime,buildtime-bindgen
+env LIBRARY_PATH=/usr/local/cuda-10.1/lib64
+cargo build --features enable-cuda
 ```
+
+## License
+
+MIT license.
 
 ## Credits
 
