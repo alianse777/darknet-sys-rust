@@ -167,13 +167,15 @@ where
             if is_opencv_enabled() { "ON" } else { "OFF" },
         )
         .build();
-    println!("cargo:rustc-link-search={}", dst.join("build").display());
 
-    // link to different target under distinct profiles
+    // link to darknet
+    println!("cargo:rustc-link-search={}", dst.join("build").display());
     match guess_cmake_profile() {
-        "Debug" => println!("cargo:rustc-link-lib={}=darkd", link),
-        _ => println!("cargo:rustc-link-lib={}=dark", link),
+        "Debug" => println!("cargo:rustc-link-lib={}=darknetd", link),
+        _ => println!("cargo:rustc-link-lib={}=darknet", link),
     }
+
+    // link dependent libraries if linking to static library
     if !is_dynamic() {
         println!("cargo:rustc-link-lib=gomp");
         println!("cargo:rustc-link-lib=stdc++");
