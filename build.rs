@@ -145,6 +145,10 @@ fn is_cuda_enabled() -> bool {
     cfg!(feature = "enable-cuda")
 }
 
+fn is_cudnn_enabled() -> bool {
+    cfg!(feature = "enable-cudnn")
+}
+
 fn is_opencv_enabled() -> bool {
     cfg!(feature = "enable-opencv")
 }
@@ -161,7 +165,10 @@ where
         .uses_cxx11()
         .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
         .define("ENABLE_CUDA", if is_cuda_enabled() { "ON" } else { "OFF" })
-        .define("ENABLE_CUDNN", if is_cuda_enabled() { "ON" } else { "OFF" })
+        .define(
+            "ENABLE_CUDNN",
+            if is_cudnn_enabled() { "ON" } else { "OFF" },
+        )
         .define(
             "ENABLE_OPENCV",
             if is_opencv_enabled() { "ON" } else { "OFF" },
@@ -181,9 +188,11 @@ where
         println!("cargo:rustc-link-lib=stdc++");
         if is_cuda_enabled() {
             println!("cargo:rustc-link-lib=cudart");
-            println!("cargo:rustc-link-lib=cudnn");
             println!("cargo:rustc-link-lib=cublas");
             println!("cargo:rustc-link-lib=curand");
+        }
+        if is_cudnn_enabled() {
+            println!("cargo:rustc-link-lib=cudnn");
         }
     }
 
