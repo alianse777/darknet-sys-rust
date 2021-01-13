@@ -15,6 +15,7 @@ If you clone the repository manually, run `git submodule init && git submodule u
 ## Cargo Features
 
 - `enable-cuda`: Enable CUDA (expects CUDA 10.x and cuDNN 7.x).
+- `enable-cudnn`: Enable cuDNN
 - `enable-opencv`: Enable OpenCV.
 - `runtime`: Link to darknet dynamic library. For example, `libdark.so` on Linux.
 - `dylib`: Build dynamic library instead of static
