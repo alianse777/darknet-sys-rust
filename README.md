@@ -7,7 +7,7 @@ Main crate: [darknet](https://crates.io/crates/darknet)
 Get the crate by adding the dependency to your `Cargo.toml`.
 
 ```toml
-darknet-sys = "0.2"
+darknet-sys = "0.3"
 ```
 
 If you clone the repository manually, run `git submodule init && git submodule update --recursive` to get all submodules.
