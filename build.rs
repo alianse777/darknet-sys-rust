@@ -145,10 +145,6 @@ fn is_cuda_enabled() -> bool {
     cfg!(feature = "enable-cuda")
 }
 
-fn is_cudnn_enabled() -> bool {
-    cfg!(feature = "enable-cudnn")
-}
-
 fn is_opencv_enabled() -> bool {
     cfg!(feature = "enable-opencv")
 }
@@ -165,34 +161,27 @@ where
         .uses_cxx11()
         .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
         .define("ENABLE_CUDA", if is_cuda_enabled() { "ON" } else { "OFF" })
-        .define(
-            "ENABLE_CUDNN",
-            if is_cudnn_enabled() { "ON" } else { "OFF" },
-        )
+        .define("ENABLE_CUDNN", if is_cuda_enabled() { "ON" } else { "OFF" })
         .define(
             "ENABLE_OPENCV",
             if is_opencv_enabled() { "ON" } else { "OFF" },
         )
         .build();
-
-    // link to darknet
     println!("cargo:rustc-link-search={}", dst.join("build").display());
-    match guess_cmake_profile() {
-        "Debug" => println!("cargo:rustc-link-lib={}=darknetd", link),
-        _ => println!("cargo:rustc-link-lib={}=darknet", link),
-    }
 
-    // link dependent libraries if linking to static library
+    // link to different target under distinct profiles
+    match guess_cmake_profile() {
+        "Debug" => println!("cargo:rustc-link-lib={}=darkd", link),
+        _ => println!("cargo:rustc-link-lib={}=dark", link),
+    }
     if !is_dynamic() {
         println!("cargo:rustc-link-lib=gomp");
         println!("cargo:rustc-link-lib=stdc++");
         if is_cuda_enabled() {
             println!("cargo:rustc-link-lib=cudart");
+            println!("cargo:rustc-link-lib=cudnn");
             println!("cargo:rustc-link-lib=cublas");
             println!("cargo:rustc-link-lib=curand");
-        }
-        if is_cudnn_enabled() {
-            println!("cargo:rustc-link-lib=cudnn");
         }
     }
 

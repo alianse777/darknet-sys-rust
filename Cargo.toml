@@ -23,7 +23,6 @@ buildtime-bindgen = []
 runtime = []
 dylib = []
 enable-cuda = []
-enable-cudnn = []
 enable-opencv = []
 docs-rs = []
 
