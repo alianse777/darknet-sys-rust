@@ -9,7 +9,7 @@ description = "-sys crate for Rust darknet wrapper"
 documentation = "https://docs.rs/darknet-sys/"
 readme = "./README.md"
 homepage = "https://github.com/alianse777/darknet-rust"
-include = ["src/**/*", "LICENSE", "README.md", "darknet/*", "build.rs", "!**/*.jpg", "!**/*.png", "!**/build/**/*"]
+include = ["src/**/*", "LICENSE", "README.md", "darknet/*", "build.rs", "!**/*.jpg", "!**/*.png", "!**/build/**/*", "!test*.log"]
 
 [dependencies]
 
