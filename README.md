@@ -2,7 +2,7 @@ Main crate: [darknet](https://crates.io/crates/darknet)
 
 # darknet-sys: FFI bindings to AlexeyAB's Darknet
 
-![Crates.io](https://img.shields.io/crates/v/darknet-sys) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/alianse777/darknet-sys-rust/Rust)
+[![Crates.io](https://img.shields.io/crates/v/darknet-sys?style=for-the-badge)](https://crates.io/crates/darknet-sys) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/alianse777/darknet-sys-rust/Rust?style=for-the-badge)
 
 ## Usage
 
