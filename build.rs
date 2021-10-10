@@ -184,8 +184,13 @@ where
 
     // link dependent libraries if linking to static library
     if !is_dynamic() {
-        println!("cargo:rustc-link-lib=gomp");
-        println!("cargo:rustc-link-lib=stdc++");
+        if cfg!(target_os = "macos") {
+            println!("cargo:rustc-link-lib=omp");
+            println!("cargo:rustc-link-lib=c++");
+        } else {
+            println!("cargo:rustc-link-lib=gomp");
+            println!("cargo:rustc-link-lib=stdc++");
+        }
         if is_cuda_enabled() {
             println!("cargo:rustc-link-lib=cudart");
             println!("cargo:rustc-link-lib=cublas");
