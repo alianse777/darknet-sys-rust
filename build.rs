@@ -7,6 +7,7 @@ use std::{
 
 const DARKNET_SRC_ENV: &'static str = "DARKNET_SRC";
 const DARKNET_INCLUDE_PATH_ENV: &'static str = "DARKNET_INCLUDE_PATH";
+const CUDA_PATH_ENV: &'static str = "CUDA_PATH";
 
 lazy_static::lazy_static! {
     static ref BINDINGS_SRC_PATH: PathBuf = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
@@ -184,12 +185,21 @@ where
 
     // link dependent libraries if linking to static library
     if !is_dynamic() {
-        println!("cargo:rustc-link-lib=gomp");
-        println!("cargo:rustc-link-lib=stdc++");
+        if cfg!(target_os = "macos") {
+            println!("cargo:rustc-link-lib=omp");
+            println!("cargo:rustc-link-lib=c++");
+        } else {
+            println!("cargo:rustc-link-lib=gomp");
+            println!("cargo:rustc-link-lib=stdc++");
+        }
         if is_cuda_enabled() {
             println!("cargo:rustc-link-lib=cudart");
             println!("cargo:rustc-link-lib=cublas");
             println!("cargo:rustc-link-lib=curand");
+            let cuda_lib_path = env::var_os(CUDA_PATH_ENV)
+                .map(|value| PathBuf::from(value).join("lib"))
+                .unwrap_or_else(|| "/opt/cuda/lib".into());
+            println!("cargo:rustc-link-search={}", cuda_lib_path.display());
         }
         if is_cudnn_enabled() {
             println!("cargo:rustc-link-lib=cudnn");
