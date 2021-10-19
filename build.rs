@@ -7,6 +7,7 @@ use std::{
 
 const DARKNET_SRC_ENV: &'static str = "DARKNET_SRC";
 const DARKNET_INCLUDE_PATH_ENV: &'static str = "DARKNET_INCLUDE_PATH";
+const CUDA_PATH_ENV: &'static str = "CUDA_PATH";
 
 lazy_static::lazy_static! {
     static ref BINDINGS_SRC_PATH: PathBuf = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
@@ -195,6 +196,10 @@ where
             println!("cargo:rustc-link-lib=cudart");
             println!("cargo:rustc-link-lib=cublas");
             println!("cargo:rustc-link-lib=curand");
+            let cuda_lib_path = env::var_os(CUDA_PATH_ENV)
+                .map(|value| PathBuf::from(value).join("lib"))
+                .unwrap_or_else(|| "/opt/cuda/lib".into());
+            println!("cargo:rustc-link-search={}", cuda_lib_path.display());
         }
         if is_cudnn_enabled() {
             println!("cargo:rustc-link-lib=cudnn");
