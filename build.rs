@@ -243,6 +243,7 @@ fn build_from_source() -> Result<()> {
 fn main() -> Result<()> {
     println!("cargo:rerun-if-env-changed={}", DARKNET_SRC_ENV);
     println!("cargo:rerun-if-env-changed={}", DARKNET_INCLUDE_PATH_ENV);
+    println!("cargo:rerun-if-env-changed={}", CUDA_PATH_ENV);
     println!(
         "cargo:rerun-if-env-changed={}",
         BINDINGS_TARGET_PATH.display()
