@@ -197,8 +197,9 @@ where
             println!("cargo:rustc-link-lib=cublas");
             println!("cargo:rustc-link-lib=curand");
             let cuda_lib_path = env::var_os(CUDA_PATH_ENV)
-                .map(|value| PathBuf::from(value).join("lib"))
-                .unwrap_or_else(|| "/opt/cuda/lib".into());
+                .map(PathBuf::from)
+                .unwrap_or_else(|| "/opt/cuda".into())
+                .join("lib64");
             println!("cargo:rustc-link-search={}", cuda_lib_path.display());
         }
         if is_cudnn_enabled() {
