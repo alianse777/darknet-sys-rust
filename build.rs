@@ -8,6 +8,7 @@ use std::{
 const DARKNET_SRC_ENV: &'static str = "DARKNET_SRC";
 const DARKNET_INCLUDE_PATH_ENV: &'static str = "DARKNET_INCLUDE_PATH";
 const CUDA_PATH_ENV: &'static str = "CUDA_PATH";
+const CUDA_ARCHITECTURES_ENV: &'static str = "CUDA_ARCHITECTURES";
 
 lazy_static::lazy_static! {
     static ref BINDINGS_SRC_PATH: PathBuf = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
@@ -174,6 +175,10 @@ where
             "ENABLE_OPENCV",
             if is_opencv_enabled() { "ON" } else { "OFF" },
         )
+        .define(
+            "CUDA_ARCHITECTURES",
+            env::var_os(CUDA_ARCHITECTURES_ENV).unwrap_or_else(|| "Auto".into()),
+        )
         .build();
 
     // link to darknet
@@ -243,6 +248,8 @@ fn build_from_source() -> Result<()> {
 fn main() -> Result<()> {
     println!("cargo:rerun-if-env-changed={}", DARKNET_SRC_ENV);
     println!("cargo:rerun-if-env-changed={}", DARKNET_INCLUDE_PATH_ENV);
+    println!("cargo:rerun-if-env-changed={}", CUDA_PATH_ENV);
+    println!("cargo:rerun-if-env-changed={}", CUDA_ARCHITECTURES_ENV);
     println!(
         "cargo:rerun-if-env-changed={}",
         BINDINGS_TARGET_PATH.display()

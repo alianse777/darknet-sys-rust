@@ -69,12 +69,14 @@ If you prefer to your (possibly modified) header files, fill the header director
 
 Please check both CUDA 10.x and cuDNN 7.x are installed and versions are correct.
 
-They are not installed to standard paths on most systems. Please add the CUDA library directory to `LIBRARY_PATH` environment variable before building. For example on Ubuntu and CUDA 10.1,
+They are not installed to standard paths on most systems. `darknet-sys` build system reads `CUDA_PATH` environment variable (which defaults to `/opt/cuda` if not set) and assumes it can find cuda libraries at `${CUDA_PATH}/lib64`.
 
 ```sh
-env LIBRARY_PATH=/usr/local/cuda-10.1/lib64
+export CUDA_PATH=/usr/local/cuda-10.1
 cargo build --features enable-cuda
 ```
+
+You can also set `CUDA_ARCHITECTURES` which is passed to darknet's cmake. It defaults to `Auto`, which auto-detects GPU architecture based on card present in the system during build.
 
 ## License
 
