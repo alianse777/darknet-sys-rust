@@ -9,6 +9,7 @@ const DARKNET_SRC_ENV: &'static str = "DARKNET_SRC";
 const DARKNET_INCLUDE_PATH_ENV: &'static str = "DARKNET_INCLUDE_PATH";
 const CUDA_PATH_ENV: &'static str = "CUDA_PATH";
 const CUDA_ARCHITECTURES_ENV: &'static str = "CUDA_ARCHITECTURES";
+const DARKNET_ENABLE_OPENMP_ENV: &'static str = "DARKNET_ENABLE_OPENMP";
 
 lazy_static::lazy_static! {
     static ref BINDINGS_SRC_PATH: PathBuf = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
@@ -163,7 +164,9 @@ where
     let path = path.as_ref();
     copy(path, LIBRARY_PATH.as_path())?;
     let path = LIBRARY_PATH.as_path();
-    let dst = cmake::Config::new(path)
+
+    let mut config = cmake::Config::new(path);
+    config
         .uses_cxx11()
         .define("BUILD_SHARED_LIBS", if is_dynamic() { "ON" } else { "OFF" })
         .define("ENABLE_CUDA", if is_cuda_enabled() { "ON" } else { "OFF" })
@@ -178,8 +181,16 @@ where
         .define(
             "CUDA_ARCHITECTURES",
             env::var_os(CUDA_ARCHITECTURES_ENV).unwrap_or_else(|| "Auto".into()),
-        )
-        .build();
+        );
+    let enable_openmp = env::var_os(DARKNET_ENABLE_OPENMP_ENV).unwrap_or_default();
+    if enable_openmp == "0" {
+        // https://cmake.org/cmake/help/latest/variable/CMAKE_DISABLE_FIND_PACKAGE_PackageName.html
+        config.define("CMAKE_DISABLE_FIND_PACKAGE_OpenMP", "ON");
+    } else if enable_openmp == "1" {
+        // https://cmake.org/cmake/help/latest/variable/CMAKE_REQUIRE_FIND_PACKAGE_PackageName.html
+        config.define("CMAKE_REQUIRE_FIND_PACKAGE_OpenMP", "ON");
+    }
+    let dst = config.build();
 
     // link to darknet
     println!("cargo:rustc-link-search={}", dst.join("build").display());
@@ -250,6 +261,7 @@ fn main() -> Result<()> {
     println!("cargo:rerun-if-env-changed={}", DARKNET_INCLUDE_PATH_ENV);
     println!("cargo:rerun-if-env-changed={}", CUDA_PATH_ENV);
     println!("cargo:rerun-if-env-changed={}", CUDA_ARCHITECTURES_ENV);
+    println!("cargo:rerun-if-env-changed={}", DARKNET_ENABLE_OPENMP_ENV);
     println!(
         "cargo:rerun-if-env-changed={}",
         BINDINGS_TARGET_PATH.display()
