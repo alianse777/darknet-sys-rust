@@ -19,7 +19,8 @@ lazy_static::lazy_static! {
 
 // Recursively copy directory
 // Ref: https://stackoverflow.com/a/60406693
-pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<(), std::io::Error> {
+// Modified to remove target files right before copying to circumvent permission problems.
+fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<(), std::io::Error> {
     let mut stack = Vec::new();
     stack.push(PathBuf::from(from.as_ref()));
     let output_root = PathBuf::from(to.as_ref());
@@ -48,6 +49,10 @@ pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<(), std::i
                     Some(filename) => {
                         let dest_path = dest.join(filename);
                         println!("  copy: {:?} -> {:?}", &path, &dest_path);
+                        // Some `git` files are created with write protection, so replacing them
+                        // directly can fail with a permissions error. Remove the destination file
+                        // first. Ignore any errors, only the fs::copy() call is critical.
+                        fs::remove_file(&dest_path).ok();
                         fs::copy(&path, &dest_path)?;
                     }
                     None => {
