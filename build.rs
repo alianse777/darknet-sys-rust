@@ -9,7 +9,6 @@ const DARKNET_SRC_ENV: &'static str = "DARKNET_SRC";
 const DARKNET_INCLUDE_PATH_ENV: &'static str = "DARKNET_INCLUDE_PATH";
 const CUDA_PATH_ENV: &'static str = "CUDA_PATH";
 const CUDA_ARCHITECTURES_ENV: &'static str = "CUDA_ARCHITECTURES";
-const DARKNET_ENABLE_OPENMP_ENV: &'static str = "DARKNET_ENABLE_OPENMP";
 
 lazy_static::lazy_static! {
     static ref BINDINGS_SRC_PATH: PathBuf = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR")).join("src").join("bindings.rs");
@@ -161,6 +160,10 @@ fn is_opencv_enabled() -> bool {
     cfg!(feature = "enable-opencv")
 }
 
+fn is_openmp_enabled() -> bool {
+    cfg!(feature = "enable-openmp")
+}
+
 fn build_with_cmake<P>(path: P) -> Result<()>
 where
     P: AsRef<Path>,
@@ -187,13 +190,12 @@ where
             "CUDA_ARCHITECTURES",
             env::var_os(CUDA_ARCHITECTURES_ENV).unwrap_or_else(|| "Auto".into()),
         );
-    let enable_openmp = env::var_os(DARKNET_ENABLE_OPENMP_ENV).unwrap_or_default();
-    if enable_openmp == "0" {
-        // https://cmake.org/cmake/help/latest/variable/CMAKE_DISABLE_FIND_PACKAGE_PackageName.html
-        config.define("CMAKE_DISABLE_FIND_PACKAGE_OpenMP", "ON");
-    } else if enable_openmp == "1" {
+    if is_openmp_enabled() {
         // https://cmake.org/cmake/help/latest/variable/CMAKE_REQUIRE_FIND_PACKAGE_PackageName.html
         config.define("CMAKE_REQUIRE_FIND_PACKAGE_OpenMP", "ON");
+    } else {
+        // https://cmake.org/cmake/help/latest/variable/CMAKE_DISABLE_FIND_PACKAGE_PackageName.html
+        config.define("CMAKE_DISABLE_FIND_PACKAGE_OpenMP", "ON");
     }
     let dst = config.build();
 
@@ -207,10 +209,14 @@ where
     // link dependent libraries if linking to static library
     if !is_dynamic() {
         if cfg!(target_os = "macos") {
-            println!("cargo:rustc-link-lib=omp");
+            if is_openmp_enabled() {
+                println!("cargo:rustc-link-lib=omp");
+            }
             println!("cargo:rustc-link-lib=c++");
         } else {
-            println!("cargo:rustc-link-lib=gomp");
+            if is_openmp_enabled() {
+                println!("cargo:rustc-link-lib=gomp");
+            }
             println!("cargo:rustc-link-lib=stdc++");
         }
         if is_cuda_enabled() {
@@ -266,7 +272,6 @@ fn main() -> Result<()> {
     println!("cargo:rerun-if-env-changed={}", DARKNET_INCLUDE_PATH_ENV);
     println!("cargo:rerun-if-env-changed={}", CUDA_PATH_ENV);
     println!("cargo:rerun-if-env-changed={}", CUDA_ARCHITECTURES_ENV);
-    println!("cargo:rerun-if-env-changed={}", DARKNET_ENABLE_OPENMP_ENV);
     println!(
         "cargo:rerun-if-env-changed={}",
         BINDINGS_TARGET_PATH.display()

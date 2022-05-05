@@ -20,12 +20,14 @@ cmake = "0.1"
 lazy_static = "1.4"
 
 [features]
+default = ["enable-openmp"]
 buildtime-bindgen = []
 runtime = []
 dylib = []
 enable-cuda = []
 enable-cudnn = []
 enable-opencv = []
+enable-openmp = []
 docs-rs = []
 
 ["package.metadata.docs.rs"]
