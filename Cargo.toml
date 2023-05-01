@@ -15,7 +15,7 @@ include = ["src/**/*", "LICENSE", "README.md", "darknet/*", "build.rs", "!**/*.j
 
 [build-dependencies]
 anyhow = "1.0"
-bindgen = "0.55"
+bindgen = "0.65.1"
 cmake = "0.1"
 lazy_static = "1.4"
 
