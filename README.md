@@ -83,4 +83,4 @@ MIT license.
 
 ## Credits
 
-Huge thanks to [jerry73204](https://github.com/jerry73204)
+Huge thanks to all contributors!
